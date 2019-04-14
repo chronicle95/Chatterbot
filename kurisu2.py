@@ -207,7 +207,7 @@ def findBestFittingAnswer(i):
 # returns the answer
 
 
-def analyzePhrase(s, ishidden):
+def analyzePhrase(s, no_output=False):
     global last_user_phrase
     global phrases
     global emotion
@@ -275,7 +275,7 @@ def analyzePhrase(s, ishidden):
         last_user_phrase = -2
 
         # if verbose mode (chatting)
-        if not ishidden:
+        if not no_output:
             showUpRandomPhrase(learnt)  # show message
 
     # do answering stuff
@@ -283,7 +283,7 @@ def analyzePhrase(s, ishidden):
         last_user_phrase = current_user_phrase
         i = findBestFittingAnswer(current_user_phrase)
         if i != -1:
-            if not ishidden:  # if verbose mode (i.e. chatting)
+            if not no_output:  # if verbose mode (i.e. chatting)
                 showUpRandomPhrase(pairs[i])
 
 # loads current state from a file
