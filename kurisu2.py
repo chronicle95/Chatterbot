@@ -167,6 +167,18 @@ def tossWord(s):
 
 # takes an array of indexes
 # chooses random one
+# returns phrase with chosen index
+# if the list is empty -> empty string
+
+
+def returnRandomPhrase(a):
+    if len(a) > 0:
+        i = int(random.random()*len(a))
+        return releasePhrase(a[i])
+    return ''
+
+# takes an array of indexes
+# chooses random one
 # prints out phrase with chosen index
 # if the list is empty -> prints nothing
 
@@ -207,7 +219,7 @@ def findBestFittingAnswer(i):
 # returns the answer
 
 
-def analyzePhrase(s, no_output=False):
+def analyzePhrase(s, no_output=False, return_as_text=False):
     global last_user_phrase
     global phrases
     global emotion
@@ -276,7 +288,10 @@ def analyzePhrase(s, no_output=False):
 
         # if verbose mode (chatting)
         if not no_output:
-            showUpRandomPhrase(learnt)  # show message
+            if return_as_text:
+                return returnRandomPhrase(learnt)
+            else:
+                showUpRandomPhrase(learnt)  # show message
 
     # do answering stuff
     else:
@@ -284,7 +299,10 @@ def analyzePhrase(s, no_output=False):
         i = findBestFittingAnswer(current_user_phrase)
         if i != -1:
             if not no_output:  # if verbose mode (i.e. chatting)
-                showUpRandomPhrase(pairs[i])
+                if return_as_text:
+                    return returnRandomPhrase(pairs[i])
+                else:
+                    showUpRandomPhrase(pairs[i])
 
 # loads current state from a file
 # file name should be: <nickname>.txt
