@@ -27,8 +27,7 @@ learnt = []		# message after learning a new phrase
 last_user_phrase = -1  # initialize last user phrase with -1
 
 nickname = ''
-user_nickname = ''
-
+users = {}
 
 # prints out all the statistics
 # i.e. count of words, phrases, all the total etc
@@ -96,10 +95,11 @@ def arraysEqual(a, b):
 # returns print-ready phrase
 
 
-def releasePhrase(i):
+def releasePhrase(i, nick):
     global phrases
     global emotion
     global words
+    global users
     s = ''
     for wi in phrases[i]:
         # check if word contains special operators
@@ -115,7 +115,7 @@ def releasePhrase(i):
                 # after exception came
                 # user defined commands go right here
                 if k == 'username':
-                    s += user_nickname + ' '
+                    s += nick + ' '
                 if k == 'time':
                     hour = '%02i' % (datetime.datetime.now().hour)
                     minute = '%02i' % (datetime.datetime.now().minute)
@@ -130,9 +130,9 @@ def releasePhrase(i):
 # prints it carefully
 
 
-def printPhrase(i):
+def printPhrase(i, nick):
     global nickname
-    print(' ' + nickname.ljust(10) + ' -> ' + releasePhrase(i))
+    print(' ' + nickname.ljust(10) + ' -> ' + releasePhrase(i, nick))
 
 # filters out chars by mask
 # returns result string
@@ -171,10 +171,10 @@ def tossWord(s):
 # if the list is empty -> empty string
 
 
-def returnRandomPhrase(a):
+def returnRandomPhrase(a, nick):
     if len(a) > 0:
         i = int(random.random()*len(a))
-        return releasePhrase(a[i])
+        return releasePhrase(a[i], nick)
     return ''
 
 # takes an array of indexes
@@ -183,17 +183,17 @@ def returnRandomPhrase(a):
 # if the list is empty -> prints nothing
 
 
-def showUpRandomPhrase(a):
+def showUpRandomPhrase(a, nick):
     if len(a) > 0:
         i = int(random.random()*len(a))
-        printPhrase(a[i])
+        printPhrase(a[i], nick)
 
 # greets the user with random phrase
 
 
-def ohayogozaimasu():
+def ohayogozaimasu(nick):
     global greetz
-    showUpRandomPhrase(greetz)
+    showUpRandomPhrase(greetz, nick)
 
 # looks for the best answer to the chosen user phrase
 # at index 'i'
@@ -219,14 +219,14 @@ def findBestFittingAnswer(i):
 # returns the answer
 
 
-def analyzePhrase(s, no_output=False, return_as_text=False):
-    global last_user_phrase
+def analyzePhrase(s, nick, no_output=False, return_as_text=False):
     global phrases
     global emotion
     global pairs
     global greetz
     global learnt
     global mask
+    global users
 
     current_user_phrase = 0  # index of current phrase in phrases array
 
@@ -274,35 +274,35 @@ def analyzePhrase(s, no_output=False, return_as_text=False):
         phrases.append(a)
         emotion.append(emo)
         pairs.append([])
-        current_user_phrase = len(phrases) - 1
+        users[nick] = len(phrases) - 1
 
     # do teaching related stuff
     if teach:
-        if last_user_phrase == -1:
+        if users[nick] == -1:
             greetz.append(current_user_phrase)
-        elif last_user_phrase == -2:
+        elif users[nick] == -2:
             learnt.append(current_user_phrase)
         else:
-            pairs[last_user_phrase].append(current_user_phrase)
-        last_user_phrase = -2
+            pairs[users[nick]].append(current_user_phrase)
+        users[nick] = -2
 
         # if verbose mode (chatting)
         if not no_output:
             if return_as_text:
-                return returnRandomPhrase(learnt)
+                return returnRandomPhrase(learnt, nick)
             else:
-                showUpRandomPhrase(learnt)  # show message
+                showUpRandomPhrase(learnt, nick)  # show message
 
     # do answering stuff
     else:
-        last_user_phrase = current_user_phrase
+        users[nick] = current_user_phrase
         i = findBestFittingAnswer(current_user_phrase)
         if i != -1:
             if not no_output:  # if verbose mode (i.e. chatting)
                 if return_as_text:
-                    return returnRandomPhrase(pairs[i])
+                    return returnRandomPhrase(pairs[i], nick)
                 else:
-                    showUpRandomPhrase(pairs[i])
+                    showUpRandomPhrase(pairs[i], nick)
 
 # loads current state from a file
 # file name should be: <nickname>.txt
@@ -400,8 +400,8 @@ def loadDialogA(fn):
                 # overwork the chain of sentences
                 for i in range(1, len(pair)):
                     if deflen > 0:
-                        analyzePhrase(pair[0].strip(), True)
-                    analyzePhrase('~'+pair[i].strip(), True)
+                        analyzePhrase(pair[0].strip(), 'anon', True)
+                    analyzePhrase('~'+pair[i].strip(), 'anon', True)
             print(' (Info) Done loading.')
             showStats()  # print out statistics
     except IOError:
@@ -430,14 +430,14 @@ def parseCommands(cmd):
         showStats()
     else:
         time.sleep(0.5)
-        analyzePhrase(cmd, False)
+        analyzePhrase(cmd, list(users.keys())[0], False)
 
 # main entry point
 
 
 def main():
     global nickname
-    global user_nickname
+    global users
 
     print('Kurisu-san 0.1alpha')
     print('Written by Tyoma Bondarenko in January 2014')
@@ -445,12 +445,12 @@ def main():
     nickname = input('Host nickname: ')
     loadProgress()
     showStats()
-    user_nickname = input('Log in as: ')
+    users[input('Log in as: ').strip()] = []
     print()
 
-    ohayogozaimasu()
+    ohayogozaimasu(list(users.keys())[0])
     while True:
-        sentence = input(' ' + user_nickname.ljust(10) + ' -> ')
+        sentence = input(' ' + list(users.keys())[0].ljust(10) + ' -> ')
         parseCommands(sentence)
 
 
