@@ -407,6 +407,20 @@ def loadDialogA(fn):
     except IOError:
         print(' (Error) File read error. Check if the name is correct.')
 
+# export dialog
+
+
+def saveDialogA(fn):
+    global pairs
+    try:
+        with open(fn, 'w') as f:
+            for i in range(len(phrases)):
+                for j in range(len(pairs[i])):
+                    f.write(releasePhrase(i, 'anon') + ' => ')
+                    f.write(releasePhrase(pairs[i][j], 'anon') + '\n')
+    except IOError:
+        print(' (Error) File write error')
+
 # parse user commands
 # each command begins with asterisk sign
 # if no one command passes, phrase parser is launched
@@ -426,6 +440,9 @@ def parseCommands(cmd):
         dlgfnm = input('\n Dialog file name: ')
         loadDialogA(dlgfnm)
         print()
+    elif cmd == '*edlg':
+        dlgfnm = input('\n Export file name: ')
+        saveDialogA(dlgfnm)
     elif cmd == '*stats':
         showStats()
     else:
