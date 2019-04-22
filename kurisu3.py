@@ -47,14 +47,17 @@ class AIBotPhrase(list):
 
 
 class AIBotAnswer:
-    def __init__(self, phrase=AIBotPhrase(), phrase_list=[]):
-        self.phrase = phrase
-        self.options = phrase_list
+    def __init__(self, phrase_index, phrase_index_list):
+        self.phrase = phrase_index
+        if type(phrase_index_list) == int:
+            self.options = [phrase_index_list]
+        else:
+            self.options = phrase_index_list
 
-    def get_key_phrase(self):
+    def get_key_index(self):
         return self.phrase
 
-    def get_random(self):
+    def get_answer_index(self):
         return random.choice(self.options)
 
 
@@ -65,23 +68,34 @@ class AIBot:
         self.phrases = []
         self.answers = []
 
-    def learn(self, nick, query, response):
-        pass
-
-    def answer(self, nick, text):
-        user_phrase = AIBotPhrase(text, self.words)
-        if not user_phrase in self.phrases:
-            self.phrases.append(user_phrase)
-            user_phrase_index = len(self.phrases)-1
+    def _assign_phrase_index(self, phrase):
+        if not phrase in self.phrases:
+            self.phrases.append(phrase)
+            return len(self.phrases) - 1
         else:
-            user_phrase_index = self.phrases.index(user_phrase)
+            return self.phrases.index(phrase)
+
+    def learn(self, nick, query_text, response_text):
+        user_phrase = AIBotPhrase(query_text, self.words)
+        bot_answer = AIBotPhrase(response_text, self.words)
+        user_phrase_index = self._assign_phrase_index(user_phrase)
+        bot_answer_index = self._assign_phrase_index(bot_answer)
+        for ans in self.answers:
+            if ans.get_key_index() == user_phrase_index:
+                ans.add_option(bot_answer_index)
+                return
+        self.answers.append(AIBotAnswer(user_phrase_index, bot_answer_index))
+
+    def answer(self, nick, query_text):
+        user_phrase = AIBotPhrase(query_text, self.words)
+        user_phrase_index = self._assign_phrase_index(user_phrase)
         if not self.answers:
             return None
         fit_ans = self.answers[0]
         min_diff = self.answers[0].diff(user_phrase)
         for ans in self.answers:
-            cur_diff = ans.get_key_phrase().diff(user_phrase)
+            cur_diff = self.phrases[ans.get_key_index()].diff(user_phrase)
             if cur_diff < min_diff:
                 fit_ans = ans
                 min_diff = cur_diff
-        return fit_ans
+        return self.phrases[fit_ans.get_answer_index()].to_string(self.words)
