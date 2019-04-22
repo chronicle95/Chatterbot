@@ -78,18 +78,6 @@ def comparePhrases(a, b):
 
     return (counter_RightFit*2 + counter_WrongFit - counter_NonExist)
 
-# checks whether two arrays are equal
-
-
-def arraysEqual(a, b):
-    if len(a) == len(b):
-        for i in range(len(a)):
-            if a[i] != b[i]:
-                return False
-        return True
-    else:
-        return False
-
 # takes phrase index as input
 # prepares phrase for output
 # returns print-ready phrase
@@ -264,7 +252,7 @@ def analyzePhrase(s, nick, no_output=False, return_as_text=False):
     # check if phrase already exists in list
     exist = False
     for i in range(len(phrases)):
-        if arraysEqual(phrases[i], a):
+        if phrases[i] == a:
             exist = True
             current_user_phrase = i
             break
