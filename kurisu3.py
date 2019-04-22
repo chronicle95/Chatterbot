@@ -112,7 +112,7 @@ class AIBotKeeper:
 
     def write(self, file_name):
         with open(file_name, 'w') as f:
-            for ans in self.answers:
+            for ans in self.bot.answers:
                 b = self.bot
                 key_str = b.phrases[ans.get_key_index()].to_string(b.words)
                 for opt in ans.options:
