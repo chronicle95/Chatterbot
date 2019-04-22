@@ -5,9 +5,6 @@ import random
 
 class AIBotPhrase(list):
     PunctChars = '!?.,-'
-    General = 0
-    Exclamation = 1
-    Question = 2
 
     def __init__(self, text="", words=[]):
         if text:
