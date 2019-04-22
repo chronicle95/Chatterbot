@@ -97,8 +97,9 @@ class AIBot:
         user_phrase_index = self._assign_phrase_index(user_phrase)
         if not self.answers:
             return None
-        fit_ans = self.answers[0]
-        min_diff = self.phrases[self.answers[0].get_answer_index()].diff(
+        rr = random.randrange(len(self.answers))
+        fit_ans = self.answers[rr]
+        min_diff = self.phrases[self.answers[rr].get_key_index()].diff(
             user_phrase)
         for ans in self.answers:
             cur_diff = self.phrases[ans.get_key_index()].diff(user_phrase)
