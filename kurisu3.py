@@ -43,7 +43,7 @@ class AIBotPhrase(list):
             cost = 0
         else:
             cost = 1
-        return min(diff(other, i-1, j)+1, diff(other, i, j-1)+1, diff(other, i-1, j-1)+cost)
+        return min(self.diff(other, i-1, j)+1, self.diff(other, i, j-1)+1, self.diff(other, i-1, j-1)+cost)
 
 
 class AIBotAnswer:
@@ -53,6 +53,10 @@ class AIBotAnswer:
             self.options = [phrase_index_list]
         else:
             self.options = phrase_index_list
+
+    def add_option(phrase_index):
+        # allow for same index to be reapplied many times
+        self.options.append(phrase_index)
 
     def get_key_index(self):
         return self.phrase
@@ -92,7 +96,7 @@ class AIBot:
         if not self.answers:
             return None
         fit_ans = self.answers[0]
-        min_diff = self.answers[0].diff(user_phrase)
+        min_diff = self.phrases[self.answers[0].get_answer_index()].diff(user_phrase)
         for ans in self.answers:
             cur_diff = self.phrases[ans.get_key_index()].diff(user_phrase)
             if cur_diff < min_diff:
