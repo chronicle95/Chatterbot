@@ -54,7 +54,7 @@ class AIBotAnswer:
         else:
             self.options = phrase_index_list
 
-    def add_option(phrase_index):
+    def add_option(self, phrase_index):
         # allow for same index to be reapplied many times
         self.options.append(phrase_index)
 
@@ -110,7 +110,7 @@ class AIBotKeeper:
     def __init__(self, bot):
         self.bot = bot
 
-    def export(self, file_name):
+    def write(self, file_name):
         with open(file_name, 'w') as f:
             for ans in self.answers:
                 b = self.bot
@@ -119,7 +119,7 @@ class AIBotKeeper:
                     s = key_str + ' => ' + b.phrases[opt].to_string(b.words)
                     f.write(s + '\n')
 
-    def import(self, nick, file_name):
+    def read(self, nick, file_name):
         with open(file_name, 'r') as f:
             for line in f:
                 pair = line.split('=>')
