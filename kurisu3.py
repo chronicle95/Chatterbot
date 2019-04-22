@@ -1,4 +1,6 @@
-# AI
+# Kurisu chatterbot project. AI Lib
+# @author   Artem Bondarenko
+# @date     April 2019
 
 import random
 
