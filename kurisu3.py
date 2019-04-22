@@ -96,10 +96,31 @@ class AIBot:
         if not self.answers:
             return None
         fit_ans = self.answers[0]
-        min_diff = self.phrases[self.answers[0].get_answer_index()].diff(user_phrase)
+        min_diff = self.phrases[self.answers[0].get_answer_index()].diff(
+            user_phrase)
         for ans in self.answers:
             cur_diff = self.phrases[ans.get_key_index()].diff(user_phrase)
             if cur_diff < min_diff:
                 fit_ans = ans
                 min_diff = cur_diff
         return self.phrases[fit_ans.get_answer_index()].to_string(self.words)
+
+
+class AIBotKeeper:
+    def __init__(self, bot):
+        self.bot = bot
+
+    def export(self, file_name):
+        with open(file_name, 'w') as f:
+            for ans in self.answers:
+                b = self.bot
+                key_str = b.phrases[ans.get_key_index()].to_string(b.words)
+                for opt in ans.options:
+                    s = key_str + ' => ' + b.phrases[opt].to_string(b.words)
+                    f.write(s + '\n')
+
+    def import(self, nick, file_name):
+        with open(file_name, 'r') as f:
+            for line in f:
+                pair = line.split('=>')
+                self.bot.learn(nick, pair[0], pair[1])
