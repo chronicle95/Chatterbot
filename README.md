@@ -1,9 +1,9 @@
 # Chatterbot
 
 This is a simple chatterbot program.
-It is clever enough to recognize sentences, but way too stupid to keep the meaningful conversation up.
+It is clever enough to recognize short phrases, but way too stupid to keep the meaningful conversation up.
 
-The bot uses random matching (sentence to sentence) algorithm. It converts the words into numbers and makes vectors out of them. By fuzzily comparing question vectors it finds the best answers and then randomly chooses one so that each conversation is somehow different from the previous chat.
+The bot uses vector distance algorithm. It converts the words into numbers and makes vectors out of them. By fuzzily comparing question vectors it finds the best answers and then randomly chooses one so that each conversation is somehow different.
 
 It has no personality from the start. You should manually teach it, or try loading some chat logs. 
 
